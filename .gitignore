@@ -1,0 +1,45 @@
+__pycache__
+*.pyc
+.env
+.venv
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/adk_frontend/node_modules
+/adk_frontend/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/adk_frontend/coverage
+
+# next.js
+/adk_frontend/.next/
+/adk_frontend/out/
+
+# production
+/adk_frontend/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
