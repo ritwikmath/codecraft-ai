@@ -1,12 +1,63 @@
+"use client;"
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import styles from "./chat.module.css";
+import { useEffect, useState } from "react";
+import { useSession } from "@/hooks/useSession";
+import { useRouter } from "next/navigation";
+import { OrbitProgress } from "react-loading-indicators";
 
-export default function ChatInput() {
+// Simple UUID generator
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+interface ChatInputProps {
+    sessionId?: string;
+}
+
+export default function ChatInput({ sessionId }: ChatInputProps) {
+    const [input, setInput] = useState("");
+    const { createSession, loading, error, response } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (response && response.id) {
+            localStorage.setItem("message", input)
+            router.push(`/chat/${response.id}`);
+        }
+    }, [response, router, input]);
+
+    const handleSubmit = async () => {
+        if (!input.trim()) return;
+        if (!sessionId) {
+            const sessionId = generateUUID();
+            const userId = "u_123"; // Placeholder user id
+            const state = { key1: "value1", key2: 42 };
+            await createSession(userId, sessionId, state);
+        } else {
+            console.log(input)
+        }
+    };
+
     return <div className={styles.inputContainer}>
-        <textarea className={styles.inputField}></textarea>
-        <div className={styles.submitButton}>
-            <FontAwesomeIcon icon={faArrowUp} />
-        </div>
+        <textarea
+            className={styles.inputField}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+        ></textarea>
+        {
+            !loading ? 
+            <OrbitProgress color="#FFC857" size="small" text="" />
+            :
+            <div className={styles.submitButton} onClick={handleSubmit}>
+                <FontAwesomeIcon icon={faArrowUp} />
+            </div>
+        }
+        {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
 }

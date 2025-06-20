@@ -25,10 +25,10 @@ const chats: MessageProps[] = [
 
 export default function Chat() {
     const params = useParams();
-    const session = params.session;
+    const session = params.session as string;
     console.log(session)
     return <div className={styles.chatPage}>
         <Navigation />
-        <ChatContainer messages={chats}  />
+        <ChatContainer messages={chats} sessionId={session}  />
     </div>
 }

@@ -9,10 +9,11 @@ type MessageProps = {
 }
 
 type ChatMessages = {
-    messages?: MessageProps[]
+    messages?: MessageProps[],
+    sessionId?: string
 }
 
-export default function ChatContainer({ messages }: ChatMessages) {
+export default function ChatContainer({ messages, sessionId }: ChatMessages) {
     return <div className={styles.chatBox}>
             <div className={styles.mainMenu}>
                 <div className={styles.logo}>
@@ -31,6 +32,6 @@ export default function ChatContainer({ messages }: ChatMessages) {
                     })
                 }
             </div>
-            <ChatInput />
+            <ChatInput sessionId={sessionId} />
         </div>
 }
