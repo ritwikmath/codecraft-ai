@@ -7,6 +7,8 @@ interface SessionState {
 }
 
 interface UseSessionResult {
+  // fetchSessionDetails: (userId: string, sessionId: string) => Promise<void>;
+  fetchSessions: (userId: string) => Promise<void>;
   createSession: (userId: string, sessionId: string, state: SessionState) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -15,6 +17,32 @@ interface UseSessionResult {
 
 export function useSession(): UseSessionResult {
   const { loading, error, response, callAPI } = useAPI();
+
+  const fetchSessions = useCallback(
+    async (userId: string) => {
+      await callAPI({
+        method: 'GET',
+        url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions`,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+    },
+    [callAPI]
+  )
+
+  // const fetchSessionDetails = useCallback(
+  //   async (userId: string, sessionId: string) => {
+  //     await callAPI({
+  //       method: 'GET',
+  //       url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       }
+  //     });
+  //   },
+  //   [callAPI]
+  // )
 
   const createSession = useCallback(
     async (userId: string, sessionId: string, state: SessionState) => {
@@ -30,5 +58,5 @@ export function useSession(): UseSessionResult {
     [callAPI]
   );
 
-  return { createSession, loading, error, response };
+  return { fetchSessions, createSession, loading, error, response };
 } 

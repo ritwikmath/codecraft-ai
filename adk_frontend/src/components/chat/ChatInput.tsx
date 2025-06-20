@@ -18,12 +18,17 @@ function generateUUID() {
 
 interface ChatInputProps {
     sessionId?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sendMessage?: any;
+    messageLoading?: boolean
 }
 
-export default function ChatInput({ sessionId }: ChatInputProps) {
+export default function ChatInput({ sessionId, sendMessage, messageLoading }: ChatInputProps) {
     const [input, setInput] = useState("");
     const { createSession, loading, error, response } = useSession();
     const router = useRouter();
+
+    console.log(messageLoading)
 
     useEffect(() => {
         if (response && response.id) {
@@ -40,7 +45,7 @@ export default function ChatInput({ sessionId }: ChatInputProps) {
             const state = { key1: "value1", key2: 42 };
             await createSession(userId, sessionId, state);
         } else {
-            console.log(input)
+            await sendMessage(input, sessionId)
         }
     };
 
@@ -51,7 +56,7 @@ export default function ChatInput({ sessionId }: ChatInputProps) {
             onChange={e => setInput(e.target.value)}
         ></textarea>
         {
-            !loading ? 
+            loading || messageLoading ? 
             <OrbitProgress color="#FFC857" size="small" text="" />
             :
             <div className={styles.submitButton} onClick={handleSubmit}>

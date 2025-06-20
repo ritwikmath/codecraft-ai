@@ -1,7 +1,7 @@
 from google.adk.agents import Agent, SequentialAgent, LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 # from google.adk.code_executors import BuiltInCodeExecutor
-from .tools import read_file_from_github_raw
+from .tools import read_file_from_github_raw, respond_error
 
 
 MODEL_GPT_4O = "openai/gpt-4.1"
@@ -11,7 +11,9 @@ file_read_agent = Agent(
     name="read_git_file_agent",
     model="gemini-2.0-flash",
     description="This agent reads the content of a specified file from a public GitHub repository.",
-    instruction="To get the content of a file, you need to provide the GitHub repository owner, the repository name, the branch name, and the full path to the file within the repository. For example, if you want to read 'README.md' from 'octocat/Spoon-Knife' on the 'main' branch, you would provide 'octocat' for owner, 'Spoon-Knife' for repo, 'main' for branch, and 'README.md' for filepath. The agent will then return the raw file content.",
+    instruction="""To get the content of a file, you need to provide the GitHub repository owner, the repository name, the branch name, and the full path to the file within the repository.
+                   For example, if you want to read 'README.md' from 'octocat/Spoon-Knife' on the 'main' branch, you would provide 'octocat' for owner, 'Spoon-Knife' for repo, 'main' for branch, and 'README.md' for filepath.
+                   The agent will then return the raw file content.""",
     tools=[read_file_from_github_raw],
     output_key="file_content"
 )
@@ -108,4 +110,14 @@ code_pipeline_agent = SequentialAgent(
     # The agents will run in the order provided: Writer -> Reviewer -> Refactorer
 )
 
-root_agent = code_pipeline_agent
+root_agent = LlmAgent(
+    name="GithubFlowAgent",
+    model="gemini-2.0-flash",
+    sub_agents=[code_pipeline_agent],
+    description="This agent decides the flow of the request.",
+    instruction="""If message do not include github details throw a generic error.
+Otherwise pass data to SequentialAgent.
+"""
+)
+
+# root_agent = code_pipeline_agent

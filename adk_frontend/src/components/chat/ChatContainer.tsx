@@ -4,16 +4,19 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from './ChatInput';
 
 type MessageProps = {
-    message: string,
-    owner: string
+    text: string,
+    owner: 'user' | 'system'
 }
 
 type ChatMessages = {
     messages?: MessageProps[],
-    sessionId?: string
+    sessionId?: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sendMessage?: any
+    messageLoading?: boolean
 }
 
-export default function ChatContainer({ messages, sessionId }: ChatMessages) {
+export default function ChatContainer({ messages, sessionId, sendMessage, messageLoading }: ChatMessages) {
     return <div className={styles.chatBox}>
             <div className={styles.mainMenu}>
                 <div className={styles.logo}>
@@ -28,10 +31,10 @@ export default function ChatContainer({ messages, sessionId }: ChatMessages) {
             <div className={styles.messageContainer}>
                 {
                     messages && messages.map((messages, index) => {
-                        return <ChatMessage key={index} owner={messages.owner} message={messages.message} />
+                        return <ChatMessage key={index} owner={messages.owner} message={messages.text} />
                     })
                 }
             </div>
-            <ChatInput sessionId={sessionId} />
+            <ChatInput sessionId={sessionId} sendMessage={sendMessage} messageLoading={messageLoading} />
         </div>
 }
