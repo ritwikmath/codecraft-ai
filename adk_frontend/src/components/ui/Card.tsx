@@ -24,3 +24,4 @@ export default function Card({ title, description, icon, className = '' }: CardP
     </div>
   );
 }
+
