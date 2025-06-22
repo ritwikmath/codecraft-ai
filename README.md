@@ -115,12 +115,6 @@ The project utilizes several specialized agents:
 
 ---
 
-## Contributing
-
-We welcome contributions! Please refer to our `CONTRIBUTING.md` (to be created) for guidelines on how to contribute to CodeCraft.AI.
-
----
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE) (to be created).
