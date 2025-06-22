@@ -7,20 +7,27 @@ interface SessionState {
 }
 
 interface UseSessionResult {
-  // fetchSessionDetails: (userId: string, sessionId: string) => Promise<void>;
-  fetchSessions: (userId: string) => Promise<void>;
-  createSession: (userId: string, sessionId: string, state: SessionState) => Promise<void>;
-  loading: boolean;
-  error: string | null;
-  response: any;
+  create: any
+  fetchAll: any
+  fetchOne: any
 }
 
 export function useSession(): UseSessionResult {
-  const { loading, error, response, callAPI } = useAPI();
+  // const { loading, error, response, callAPI } = useAPI();
+  const createAPI = useAPI();
+  const createCallApi = createAPI.callAPI;
+
+  const fetchAllAPI = useAPI();
+  const fetchAllCallApi = fetchAllAPI.callAPI
+
+  const fetchOneAPI = useAPI();
+  const fetchOneCallAPI = fetchOneAPI.callAPI
+  
+
 
   const fetchSessions = useCallback(
     async (userId: string) => {
-      await callAPI({
+      await fetchAllCallApi({
         method: 'GET',
         url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions`,
         headers: {
@@ -28,35 +35,48 @@ export function useSession(): UseSessionResult {
         }
       });
     },
-    [callAPI]
+    [fetchAllCallApi]
   )
 
-  // const fetchSessionDetails = useCallback(
-  //   async (userId: string, sessionId: string) => {
-  //     await callAPI({
-  //       method: 'GET',
-  //       url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       }
-  //     });
-  //   },
-  //   [callAPI]
-  // )
+  const fetchSessionDetails = useCallback(
+    async (userId: string, sessionId: string) => {
+      await fetchOneCallAPI({
+        method: 'GET',
+        url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+    },
+    [fetchOneCallAPI]
+  )
 
   const createSession = useCallback(
     async (userId: string, sessionId: string, state: SessionState) => {
-      await callAPI({
+      await createCallApi({
         method: 'POST',
         url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
         headers: {
           'Content-Type': 'application/json',
         },
-        data: { state },
+        data: state,
       });
     },
-    [callAPI]
+    [createCallApi]
   );
 
-  return { fetchSessions, createSession, loading, error, response };
+  return {
+    create: {
+      ...createAPI,
+      createSession
+    },
+    fetchAll: {
+      ...fetchAllAPI,
+      fetchSessions
+    },
+    fetchOne: {
+      ...fetchOneAPI,
+      fetchSessionDetails
+    }
+  };
 } 

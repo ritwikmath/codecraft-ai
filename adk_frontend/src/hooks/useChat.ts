@@ -11,11 +11,7 @@ export interface Message {
 // Define the structure of the API response for a single item
 interface ApiResponseItem {
   author: string;
-  content: {
-    parts: Array<{
-      text: string;
-    }>;
-  };
+  content: any;
   // Add other potential properties here if known
   [key: string]: any;
 }
@@ -54,18 +50,18 @@ export function useChat(initialMessages: Message[] = []) {
   useEffect(() => {
     if (response) {
       const systemResponse = response.find(
-        (item) => item.author === 'unit_test_generate_agent'
+        (item) => item?.actions?.stateDelta?.final_output
       );
 
-      if (systemResponse && systemResponse.content?.parts?.[0]?.text) {
+      if (systemResponse && systemResponse.actions?.stateDelta?.final_output) {
         const systemMessage: Message = {
           owner: 'system',
-          text: systemResponse.content.parts[0].text,
+          text: systemResponse.actions?.stateDelta?.final_output,
         };
         setMessages(prevMessages => [...prevMessages, systemMessage]);
       }
     }
   }, [response]);
 
-  return { messages, loading, error, sendMessage };
+  return { setMessages, messages, loading, error, sendMessage };
 }

@@ -25,10 +25,11 @@ interface ChatInputProps {
 
 export default function ChatInput({ sessionId, sendMessage, messageLoading }: ChatInputProps) {
     const [input, setInput] = useState("");
-    const { createSession, loading, error, response } = useSession();
+    const [sessionName, setSessionName] = useState("");
+    const [displayError, setDisplayError] = useState("");
+    const { create } = useSession();
+    const { createSession, loading, error, response } = create
     const router = useRouter();
-
-    console.log(messageLoading)
 
     useEffect(() => {
         if (response && response.id) {
@@ -38,21 +39,43 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
     }, [response, router, input]);
 
     const handleSubmit = async () => {
-        if (!input.trim()) return;
+        if (!input.trim()) {
+            setDisplayError("No message to process")
+            return
+        }
         if (!sessionId) {
-            const sessionId = generateUUID();
+            if (!sessionName || sessionName == "" || sessionName.length <= 3) {
+                setDisplayError("Give a proper session name")
+                return
+            }
+            const sessionUUId = generateUUID();
             const userId = "u_123"; // Placeholder user id
-            const state = { key1: "value1", key2: 42 };
-            await createSession(userId, sessionId, state);
+            const state = { "name": sessionName, "history": [] };
+            await createSession(userId, sessionUUId, state);
         } else {
             await sendMessage(input, sessionId)
         }
     };
 
     return <div className={styles.inputContainer}>
+        {
+            displayError != "" &&
+            <span className={styles.errorMessage}>{displayError}</span>
+        }
+        {
+            !sessionId && <input
+                type="text"
+                value={sessionName}
+                onChange={e => setSessionName(e.target.value)}
+                className={styles.inputField + " " + styles.nameInputField}
+                id="session_name"
+                placeholder="Session name. Example: Greedy algorithm"
+            />
+        }
         <textarea
             className={styles.inputField}
             value={input}
+            id="message"
             onChange={e => setInput(e.target.value)}
         ></textarea>
         {

@@ -30,8 +30,8 @@ export default function ChatContainer({ messages, sessionId, sendMessage, messag
             </div>
             <div className={styles.messageContainer}>
                 {
-                    messages && messages.map((messages, index) => {
-                        return <ChatMessage key={index} owner={messages.owner} message={messages.text} />
+                    messages && messages.length > 0 && messages.map((message, index) => {
+                        return <ChatMessage key={index} owner={message.owner} message={message.text} />
                     })
                 }
             </div>
