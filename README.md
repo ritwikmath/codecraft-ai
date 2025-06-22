@@ -1,6 +1,6 @@
-# CodeCraft.AI
+# Codecraft.AI
 
-CodeCraft.AI is an innovative project designed to streamline and automate various aspects of the software development lifecycle, focusing on **code refactoring**, **documentation**, and **unit test generation**. It comprises a **Next.js frontend** for an intuitive user experience and a powerful **Google ADK (Agent Development Kit) backend** housing intelligent agents.
+Codecraft.AI is an innovative project designed to streamline and automate various aspects of the software development lifecycle, focusing on **code refactoring**, **documentation**, and **unit test generation**. It comprises a **Next.js frontend** for an intuitive user experience and a powerful **Google ADK (Agent Development Kit) backend** housing intelligent agents.
 
 ---
 
@@ -18,7 +18,7 @@ CodeCraft.AI is an innovative project designed to streamline and automate variou
 
 ## Architecture
 
-CodeCraft.AI's backend is built using the Google ADK, leveraging a **FastAPI server** for robust API communication. The core of the system revolves around a **Custom Agent named `UnitTestGeneratorFlowAgent`**.
+Codecraft.AI's backend is built using the Google ADK, leveraging a **FastAPI server** for robust API communication. The core of the system revolves around a **Custom Agent named `UnitTestGeneratorFlowAgent`**.
 
 [![Architecture Diagram](architecture.png)](architecture.png)
 _Architecture Diagram_
