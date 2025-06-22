@@ -49,7 +49,7 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
                 return
             }
             const sessionUUId = generateUUID();
-            const userId = "u_123"; // Placeholder user id
+            const userId = localStorage.getItem("username"); // Placeholder user id
             const state = { "name": sessionName, "history": [] };
             await createSession(userId, sessionUUId, state);
         } else {
@@ -77,6 +77,7 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
             value={input}
             id="message"
             onChange={e => setInput(e.target.value)}
+            placeholder="To use github use following format: Owner=ritwikmath,repository=datastructure-practice,branch=main,filepath=array/threesumclosest.py"
         ></textarea>
         {
             loading || messageLoading ? 

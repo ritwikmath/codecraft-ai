@@ -22,7 +22,7 @@ export function useSession(): UseSessionResult {
 
   const fetchOneAPI = useAPI();
   const fetchOneCallAPI = fetchOneAPI.callAPI
-  
+
 
 
   const fetchSessions = useCallback(

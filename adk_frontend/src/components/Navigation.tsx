@@ -1,6 +1,7 @@
-import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSearch, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 import styles from "./navigation.module.css";
 import { useSession } from "@/hooks/useSession";
 import { useEffect, memo } from "react";
@@ -11,10 +12,20 @@ const Navigation = memo(function Navigation() {
 
     const { fetchAll } = useSession();
     const { fetchSessions, response } = fetchAll
+    const router = useRouter();
 
     useEffect(() => {
-        fetchSessions("u_123")
+        const username = localStorage.getItem("username")
+        if (username)
+            fetchSessions(username)
     }, [fetchSessions])
+
+    const handleLogout = () => {
+        // Remove username from localStorage
+        localStorage.removeItem("username");
+        // Redirect to home page
+        router.push("/");
+    };
     
 
     return <div className={styles.leftMenu}>
@@ -39,6 +50,12 @@ const Navigation = memo(function Navigation() {
                         })
                     }
                 </div>
+            </div>
+            <div className={styles.logoutButton}>
+                <button onClick={handleLogout} className={styles.logoutBtn}>
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                    Logout
+                </button>
             </div>
         </div>
 })

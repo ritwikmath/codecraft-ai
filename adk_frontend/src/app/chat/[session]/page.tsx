@@ -3,7 +3,7 @@
 import ChatContainer from "@/components/chat/ChatContainer";
 import styles from "../page.module.css";
 import Navigation from "@/components/Navigation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useChat } from "@/hooks/useChat";
 import { useEffect } from "react";
 import { useSession } from "@/hooks/useSession";
@@ -16,15 +16,30 @@ export default function Chat() {
     const { fetchOne } = useSession()
     const { fetchSessionDetails, response } = fetchOne
 
+    const router = useRouter();
+
+    useEffect(() => {
+        // Check if username exists in localStorage
+        const username = localStorage.getItem("username");
+        if (!username) {
+            // Redirect to home page if no username found
+            router.push("/");
+        }
+    }, [router]);
+
     useEffect(() => {
         const message = localStorage.getItem("message")
         localStorage.removeItem("message")
         if (message) {
             sendMessage(message, session)
         } else {
-            fetchSessionDetails("u_123", session)
+            const username = localStorage.getItem("username")
+            if (username)
+                fetchSessionDetails(username, session)
+            else
+                router.push("/");
         }
-    }, [setMessages, sendMessage, session, fetchSessionDetails])
+    }, [setMessages, sendMessage, session, fetchSessionDetails, router])
 
     useEffect(() => {
         if (!Array.isArray(response) && messages.length < 1) {

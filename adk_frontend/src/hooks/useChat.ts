@@ -36,7 +36,7 @@ export function useChat(initialMessages: Message[] = []) {
       },
       data: {
         appName: 'git_agent',
-        userId: 'u_123', // Placeholder user id
+        userId: localStorage.getItem("username"), // Placeholder user id
         sessionId: sessionId,
         newMessage: {
           role: 'user',
