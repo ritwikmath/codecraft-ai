@@ -13,7 +13,8 @@ interface UseSessionResult {
 }
 
 export function useSession(): UseSessionResult {
-  // const { loading, error, response, callAPI } = useAPI();
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  console.log(backendUrl)
   const createAPI = useAPI();
   const createCallApi = createAPI.callAPI;
 
@@ -29,40 +30,40 @@ export function useSession(): UseSessionResult {
     async (userId: string) => {
       await fetchAllCallApi({
         method: 'GET',
-        url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions`,
+        url: `${backendUrl}/apps/git_agent/users/${userId}/sessions`,
         headers: {
           'Content-Type': 'application/json',
         }
       });
     },
-    [fetchAllCallApi]
+    [fetchAllCallApi, backendUrl]
   )
 
   const fetchSessionDetails = useCallback(
     async (userId: string, sessionId: string) => {
       await fetchOneCallAPI({
         method: 'GET',
-        url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
+        url: `${backendUrl}/apps/git_agent/users/${userId}/sessions/${sessionId}`,
         headers: {
           'Content-Type': 'application/json',
         }
       });
     },
-    [fetchOneCallAPI]
+    [fetchOneCallAPI, backendUrl]
   )
 
   const createSession = useCallback(
     async (userId: string, sessionId: string, state: SessionState) => {
       await createCallApi({
         method: 'POST',
-        url: `http://localhost:8000/apps/git_agent/users/${userId}/sessions/${sessionId}`,
+        url: `${backendUrl}/apps/git_agent/users/${userId}/sessions/${sessionId}`,
         headers: {
           'Content-Type': 'application/json',
         },
         data: state,
       });
     },
-    [createCallApi]
+    [createCallApi, backendUrl]
   );
 
   return {

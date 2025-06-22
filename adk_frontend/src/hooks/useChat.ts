@@ -26,10 +26,11 @@ export function useChat(initialMessages: Message[] = []) {
     // Add user message to the chat
     const userMessage: Message = { owner: 'user', text: newMessageText };
     setMessages(prevMessages => [...prevMessages, userMessage]);
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     // Prepare and make the API call
     await callAPI({
-      url: 'http://localhost:8000/run',
+      url: `${backendUrl}/run`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
