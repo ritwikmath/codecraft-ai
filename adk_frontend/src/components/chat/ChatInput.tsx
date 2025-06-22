@@ -40,12 +40,12 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
 
     const handleSubmit = async () => {
         if (!input.trim()) {
-            setDisplayError("No message to process")
+            setDisplayError("Prompt is empty")
             return
         }
         if (!sessionId) {
             if (!sessionName || sessionName == "" || sessionName.length <= 3) {
-                setDisplayError("Give a proper session name")
+                setDisplayError("Session name is empty")
                 return
             }
             const sessionUUId = generateUUID();
@@ -54,6 +54,7 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
             await createSession(userId, sessionUUId, state);
         } else {
             await sendMessage(input, sessionId)
+            setInput("")
         }
     };
 
@@ -77,7 +78,7 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
             value={input}
             id="message"
             onChange={e => setInput(e.target.value)}
-            placeholder="To use github use following format: Owner=ritwikmath,repository=datastructure-practice,branch=main,filepath=array/threesumclosest.py"
+            placeholder="Enter prompt here. To use github use following format: Owner=ritwikmath,repository=dsa,branch=main,filepath=array/dummy.py"
         ></textarea>
         {
             loading || messageLoading ? 

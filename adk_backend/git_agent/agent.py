@@ -4,7 +4,7 @@ from typing_extensions import override
 from google.adk.agents.invocation_context import InvocationContext
 from typing import AsyncGenerator
 from google.adk.events import Event
-from .tools import read_file_from_github_raw, respond_error
+from .tools import read_file_from_github_raw
 import logging
 
 
@@ -286,45 +286,6 @@ Do not add any other text before or after the code block.
     output_key="final_code"
 )
 
-# code_execute_agent = LlmAgent(
-#     name="python_code_executer",
-#     model="gemini-2.0-flash",
-#     code_executor=BuiltInCodeExecutor(),
-#     instruction="""You are a code executer.
-# Your goal is to execute unit test cases for the Python code. And find out if the code has any issue. Issue can be in the unit test or main code.
-#  **Final Code:**
-#   ```python
-#   {final_code}
-#   ``` 
-#   **Task:**
-#   Execute the Final Code and list the issues in the code. For unit tests and main code list the issues seperately for better understanding. If no issue found then output the final code.
-
-#   **Output:**
-#   If no issue found consider the final code. Then output the entire code base enclosed in triple backticks (```python ... ```). 
-# Do not add any other text before or after the code block. If the code execution failed, then output the list of issues labeled as main code and unit test scenarios.
-#     """,
-#     description="Executes Python code to identify if any issue exists.",
-#     output_key=""
-# )
-
-# code_pipeline_agent = SequentialAgent(
-#     name="CodePipelineAgent",
-#     sub_agents=[file_read_agent, code_refactor_agent, code_documentation_agent, unit_test_agent],
-#     description="Executes a sequence of code fetch from git, refactoring, and generating unit test.",
-#     # The agents will run in the order provided: Writer -> Reviewer -> Refactorer
-# )
-
-# root_agent = LlmAgent(
-#     name="GithubFlowAgent",
-#     model="gemini-2.0-flash",
-#     sub_agents=[code_pipeline_agent],
-#     description="This agent decides the flow of the request.",
-#     instruction="""If message do not include github details or python code throw a generic error.
-# Otherwise pass data to sub_agents. The agent will output in yes if it is a generic error otherwise it will output yes.
-# """,
-#     output_key="is_valid_response"
-# )
-
 unit_test_generator_flow_agent = UnitTestGeneratorFlowAgent(
     name="UnitTestGeneratorFlowAgent",
     input_decide_agent=input_decide_agent,
@@ -334,5 +295,4 @@ unit_test_generator_flow_agent = UnitTestGeneratorFlowAgent(
     unit_test_agent=unit_test_agent,
 )
 
-# root_agent = input_decide_agent
 root_agent = unit_test_generator_flow_agent

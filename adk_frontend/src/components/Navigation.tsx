@@ -1,4 +1,4 @@
-import { faPlus, faSearch, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
@@ -36,10 +36,10 @@ const Navigation = memo(function Navigation() {
                         New Chat
                     </div>
                 </Link>
-                <div className={styles.menuText}>
+                {/* <div className={styles.menuText}>
                     <FontAwesomeIcon icon={faSearch} />
                     <span>Search Chat</span>
-                </div>
+                </div> */}
             </div>
             <div className={styles.bottomMenu}>
                 <h4>Chats</h4>

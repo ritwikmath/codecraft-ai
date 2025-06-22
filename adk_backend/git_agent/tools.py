@@ -1,19 +1,5 @@
 import requests
 
-def respond_error():
-    """
-    Responds with a generic error message indicating that proper GitHub file details are required.
-
-    This tool is used when the user's request related to GitHub files is incomplete or improperly formatted.
-
-    Returns:
-        dict: A dictionary containing an error message.
-              Example: {"error_message": "Please provide a proper github file detail"}
-    """
-    return {
-        "error_message": "Please provide a proper github file detail"
-    }
-
 def read_file_from_github_raw(owner: str, repo: str, branch: str, filepath: str):
     """
     Reads a file directly from a GitHub raw content URL.

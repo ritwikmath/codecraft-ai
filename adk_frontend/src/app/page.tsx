@@ -87,18 +87,24 @@ export default function Home() {
             </h2>
             <div className={styles.helpText}>
               <p>
-                Codecraft.ai revolutionizes your development workflow by automating the most time-consuming aspects of software development. 
+                {
+                  `Codecraft.ai revolutionizes your development workflow by automating the most time-consuming aspects of software development. 
                 Our AI-powered platform saves you hours of manual work by generating comprehensive unit tests and detailed documentation 
-                for your Python code.
+                for your Python code.`
+                }
               </p>
               <p>
-                By leveraging advanced machine learning algorithms, we analyze your codebase to understand its structure, dependencies, 
+                {
+                  `By leveraging advanced machine learning algorithms, we analyze your codebase to understand its structure, dependencies, 
                 and functionality. This enables us to create accurate, maintainable tests that cover edge cases you might miss, 
-                and documentation that clearly explains your code's purpose and usage.
+                and documentation that clearly explains your code's purpose and usage.`
+                }
               </p>
               <p>
-                The result? More efficient coding, faster development cycles, and higher code quality. Focus on building features 
-                while we handle the tedious but essential tasks of testing and documentation.
+                {
+                  `The result? More efficient coding, faster development cycles, and higher code quality. Focus on building features 
+                while we handle the tedious but essential tasks of testing and documentation.`
+                }
               </p>
             </div>
           </div>
