@@ -2,6 +2,7 @@ import Image from 'next/image';
 import styles from "./chat.module.css";
 import ChatMessage from "./ChatMessage";
 import ChatInput from './ChatInput';
+import { useEffect, useRef } from 'react';
 
 type MessageProps = {
     text: string,
@@ -17,6 +18,14 @@ type ChatMessages = {
 }
 
 export default function ChatContainer({ messages, sessionId, sendMessage, messageLoading }: ChatMessages) {
+    const messageContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+    
     return <div className={styles.chatBox}>
             <div className={styles.mainMenu}>
                 <div className={styles.logo}>
@@ -28,7 +37,7 @@ export default function ChatContainer({ messages, sessionId, sendMessage, messag
                     />
                 </div>
             </div>
-            <div className={styles.messageContainer}>
+            <div className={styles.messageContainer} ref={messageContainerRef}>
                 {
                     messages && messages.length > 0 && messages.map((message, index) => {
                         return <ChatMessage key={index} owner={message.owner} message={message.text} />
