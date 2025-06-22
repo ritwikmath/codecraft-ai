@@ -1,4 +1,3 @@
-`````
 # CodeCraft.AI
 
 CodeCraft.AI is an innovative project designed to streamline and automate various aspects of the software development lifecycle, focusing on **code refactoring**, **documentation**, and **unit test generation**. It comprises a **Next.js frontend** for an intuitive user experience and a powerful **Google ADK (Agent Development Kit) backend** housing intelligent agents.
@@ -125,4 +124,3 @@ We welcome contributions! Please refer to our `CONTRIBUTING.md` (to be created) 
 ## License
 
 This project is licensed under the [MIT License](LICENSE) (to be created).
-`````
