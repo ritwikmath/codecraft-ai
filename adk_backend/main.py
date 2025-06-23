@@ -2,6 +2,7 @@ import os
 
 import uvicorn
 from google.adk.cli.fast_api import get_fast_api_app
+from google.adk.sessions import DatabaseSessionService
 
 # Get the directory where main.py is located
 AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,6 +16,7 @@ app = get_fast_api_app(
     agents_dir=AGENT_DIR,
     allow_origins=ALLOWED_ORIGINS,
     web=SERVE_WEB_INTERFACE,
+    session_service_uri="sqlite:///./sessions.db"
 )
 
 if __name__ == "__main__":

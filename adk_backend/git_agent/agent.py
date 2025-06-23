@@ -26,6 +26,7 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
     code_refactor_agent: LlmAgent
     code_documentation_agent: LlmAgent
     unit_test_agent: LlmAgent
+    code_create_agent: LlmAgent
     # code_extract_agent is declared but not used in __init__, consider if it's needed
 
     sequential_agent: SequentialAgent
@@ -37,6 +38,7 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
         name: str,
         input_decide_agent: LlmAgent,
         file_read_agent: Agent,
+        code_create_agent: LlmAgent,
         code_refactor_agent: LlmAgent,
         code_documentation_agent: LlmAgent,
         unit_test_agent: LlmAgent,
@@ -71,6 +73,7 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
         sub_agents_list = [
             input_decide_agent,
             file_read_agent,
+            code_create_agent,
             sequential_agent # The sequential_agent encapsulates the rest of the pipeline
         ]
         
@@ -80,6 +83,7 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
             # Pass the individual agents and the sequential_agent as attributes
             input_decide_agent=input_decide_agent,
             file_read_agent=file_read_agent,
+            code_create_agent=code_create_agent,
             code_refactor_agent=code_refactor_agent,
             code_documentation_agent=code_documentation_agent,
             unit_test_agent=unit_test_agent,
@@ -114,7 +118,7 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
         if "input_type" not in ctx.session.state or not ctx.session.state["input_type"]:
              return # Stop processing if initial story failed
         
-        if (user_input_type := ctx.session.state["input_type"].replace('\n', '')) not in ["github_details", "python_code", "code_modification"]:
+        if (user_input_type := ctx.session.state["input_type"].replace('\n', '')) not in ["github_details", "python_code", "code_modification", "code_generation"]:
             ctx.session.state["history"].append({
                 "owner": "system",
                 "text": user_input_type
@@ -129,7 +133,10 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
             )
             return
         
-        if user_input_type in ["github_details", "python_code"]:
+        if user_input_type in ["github_details", "python_code", "code_generation"]:
+            async for event in self.file_read_agent.run_async(ctx):
+                yield event
+        elif user_input_type == "code_generation":
             async for event in self.file_read_agent.run_async(ctx):
                 yield event
         elif user_input_type == "code_modification" and not ctx.session.state.get("final_code", False):
@@ -175,17 +182,20 @@ input_decide_agent = LlmAgent(
     **Task**
     Decide the content type of user input. The input can be categorized in three types.
 
-    1. github_details if the user input contains details to fetch a file from github. It can be in any form but messagge should have owner, repo, branch and filepath details.
+    1. github_details if the user input contains details to fetch a file from github. It can be in any form but messagge should have owner, repo, branch and filepath details. Or it can be github url, eg. https://github.com/ritwikmath/datastructure-practice/blob/main/algorithms/selectionsort.go where  ritwikmath is owner, datastructure-practice is repo, main is branch, algorithms/selectionsort.py is the file path
     2. python_code if the user input contains raw python code. It can have other related information but raw python code that can be used to generate unit test cases is must. 
     3. code_modification if the user input requests to make some changes to the pre-generated code
-    4. invalid_information if the user input does not provide python code for which unit test cases need to be generatted or github file location details from where file can be fetched.
+    4. code_generation instructions. The user input contain information on generating code.
+    5. invalid_information if the user input does not provide python code for which unit test cases need to be generatted or github file location details from where file can be fetched.
 
     **Output**
-    In case of github_details, code_modification and python_code, output should contain only either of these two exact words. In case of invalid input return a error message stating input should be either python code or github file location details.
+    In case of github_details, code_modification, code_generation and python_code, output should contain only either of these two exact words. In case of invalid_information return a error message stating input should be either python code or github file location details.
     Example of error response in case of invalid_information: 
     ```text Sorry, I couldn't understand your request. To proceed, please provide either:
     1.  **Raw Python code:** Enclosed in triple backticks if possible (e.g., ```python def my_func(): pass ```).
     2.  **GitHub file details:** Including the repository owner, name, branch, and file path (e.g., 'octocat/Spoon-Knife/main/README.md'). ```
+    3.  **Git URL:** Url to the file (e.g., 'https://github.com/ritwikmath/datastructure-practice/blob/main/algorithms/selectionsort.py'). ```
+    4.  **Instructions to generate code:** Write down instructions to generate a code in Python 
     """,
     output_key="input_type"
 )
@@ -219,6 +229,23 @@ file_read_agent = Agent(
 * **For Invalid GitHub Details/Error:** A clear error message (e.g., "Error: Invalid GitHub file details provided. Please use owner/repo/branch/filepath format, or provide valid Python code.")
 """,
     tools=[read_file_from_github_raw], # Your GitHub reading tool
+    output_key="file_content"
+)
+
+code_create_agent = LlmAgent(
+    name="code_create_agent",
+    model=LiteLlm(model=MODEL_CLAUDE_SONNET),
+    description="Read user instructions and create a code. The code should be generated in Python.",
+    instruction="""You are a code generating agent.
+Your goal is to understand the user instructions and create a Python code.
+  **Task:**
+  Carefully analyse user request and generate a code in Python. The code should be syntactically right and cover all logical components requested by user. 
+  Even if user mentions different Programming Language, use Python only. 
+
+  **Output:**
+  Output the entire code base enclosed in triple backticks (```python ... ```). 
+Do not add any other text before or after the code block.
+    """,
     output_key="file_content"
 )
 
@@ -290,6 +317,7 @@ unit_test_generator_flow_agent = UnitTestGeneratorFlowAgent(
     name="UnitTestGeneratorFlowAgent",
     input_decide_agent=input_decide_agent,
     file_read_agent=file_read_agent,
+    code_create_agent=code_create_agent,
     code_refactor_agent=code_refactor_agent,
     code_documentation_agent=code_documentation_agent,
     unit_test_agent=unit_test_agent,

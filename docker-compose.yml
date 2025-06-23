@@ -1,9 +1,15 @@
 version: '3.8'
+
+volumes:
+  sessions_vol:
+
 services:
   adk_frontend:
     build:
       context: ./adk_frontend
       dockerfile: Dockerfile
+    volumes:
+      - sessions_vol:/app/sessions.db  # Sync the DB file
     ports:
       - "80:3000"
     container_name: adk_frontend

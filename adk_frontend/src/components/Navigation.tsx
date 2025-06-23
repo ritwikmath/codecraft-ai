@@ -46,7 +46,7 @@ const Navigation = memo(function Navigation() {
                 <div className={styles.chatList}>
                     {
                         response && response.map((session, index) => {
-                            return <NavigationMenuItem key={index} id={session?.id} />
+                            return <NavigationMenuItem key={index} id={session?.id} resetSessions={fetchSessions} />
                         })
                     }
                 </div>

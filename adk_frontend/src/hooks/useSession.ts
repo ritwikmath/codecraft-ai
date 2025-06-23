@@ -10,6 +10,7 @@ interface UseSessionResult {
   create: any
   fetchAll: any
   fetchOne: any
+  deleteOne: any
 }
 
 export function useSession(): UseSessionResult {
@@ -24,7 +25,8 @@ export function useSession(): UseSessionResult {
   const fetchOneAPI = useAPI();
   const fetchOneCallAPI = fetchOneAPI.callAPI
 
-
+  const deleteOneAPI = useAPI();
+  const deleteOneCallAPI = deleteOneAPI.callAPI
 
   const fetchSessions = useCallback(
     async (userId: string) => {
@@ -50,6 +52,19 @@ export function useSession(): UseSessionResult {
       });
     },
     [fetchOneCallAPI, backendUrl]
+  )
+
+  const deleteSessionDetails = useCallback(
+    async (userId: string, sessionId: string) => {
+      await deleteOneCallAPI({
+        method: 'DELETE',
+        url: `${backendUrl}/apps/git_agent/users/${userId}/sessions/${sessionId}`,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+    },
+    [deleteOneCallAPI, backendUrl]
   )
 
   const createSession = useCallback(
@@ -78,6 +93,10 @@ export function useSession(): UseSessionResult {
     fetchOne: {
       ...fetchOneAPI,
       fetchSessionDetails
+    },
+    deleteOne: {
+      ...deleteOneAPI,
+      deleteSessionDetails
     }
   };
 } 

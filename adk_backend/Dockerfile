@@ -9,6 +9,8 @@ RUN adduser --disabled-password --gecos "" myuser && \
 
 COPY . .
 
+RUN chmod 666 ./sessions.db
+
 USER myuser
 
 ENV PATH="/home/myuser/.local/bin:$PATH"

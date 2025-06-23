@@ -32,7 +32,7 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
     const router = useRouter();
 
     useEffect(() => {
-        if (response && response.id) {
+        if (response && response?.id) {
             localStorage.setItem("message", input)
             router.push(`/chat/${response.id}`);
         }
@@ -50,10 +50,10 @@ export default function ChatInput({ sessionId, sendMessage, messageLoading }: Ch
             }
             const sessionUUId = generateUUID();
             const userId = localStorage.getItem("username"); // Placeholder user id
-            const state = { "name": sessionName, "history": [] };
+            const state = { "name": sessionName.trim(), "history": [] };
             await createSession(userId, sessionUUId, state);
         } else {
-            await sendMessage(input, sessionId)
+            await sendMessage(input.trim(), sessionId)
             setInput("")
         }
     };
