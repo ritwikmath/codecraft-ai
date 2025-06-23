@@ -133,11 +133,11 @@ class UnitTestGeneratorFlowAgent(BaseAgent):
             )
             return
         
-        if user_input_type in ["github_details", "python_code", "code_generation"]:
+        if user_input_type in ["github_details", "python_code"]:
             async for event in self.file_read_agent.run_async(ctx):
                 yield event
         elif user_input_type == "code_generation":
-            async for event in self.file_read_agent.run_async(ctx):
+            async for event in self.code_create_agent.run_async(ctx):
                 yield event
         elif user_input_type == "code_modification" and not ctx.session.state.get("final_code", False):
             error_response = "I don't have a code to fullfill your request. Please provide the code or github access details."
